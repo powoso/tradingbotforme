@@ -32,7 +32,7 @@ def seed_database(db_path: str, seed_path: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="CounterTrade Bot")
     parser.add_argument("--host", default="0.0.0.0", help="Host to bind to")
-    parser.add_argument("--port", type=int, default=8000, help="Port to bind to")
+    parser.add_argument("--port", type=int, default=8877, help="Port to bind to")
     parser.add_argument("--seed", action="store_true", help="Load seed data")
     parser.add_argument("--reload", action="store_true", help="Enable auto-reload")
     args = parser.parse_args()
@@ -52,7 +52,7 @@ def main() -> None:
         seed_database(db_path, seed_path)
 
     print(f"\n  CounterTrade Bot starting on http://{args.host}:{args.port}")
-    print("  Frontend dev server: http://localhost:3000\n")
+    print("  Frontend dev server: http://localhost:4173\n")
 
     uvicorn.run(
         "backend.main:app",
