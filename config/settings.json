@@ -1,0 +1,11 @@
+{
+  "llm_backend": "ollama",
+  "ollama_url": "http://localhost:11434/api/generate",
+  "lmstudio_url": "http://localhost:1234/v1/chat/completions",
+  "model_name": "llama3",
+  "llm_timeout": 30,
+  "use_llm": false,
+  "telegram_bot_token": "",
+  "telegram_chat_id": "",
+  "notifications_enabled": false
+}

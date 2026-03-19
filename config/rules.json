@@ -1,0 +1,92 @@
+[
+  {
+    "name": "capitulation_buy",
+    "conditions": {"state": "capitulation", "intensity_min": 50},
+    "action": "BUY",
+    "conviction_range": [60, 80],
+    "guardrails": ["Only if no new bearish fundamental thesis", "Scale in with small position (25-50%)", "Set tight stop loss"],
+    "cooldown": 0,
+    "priority": 10
+  },
+  {
+    "name": "panic_selling_wait",
+    "conditions": {"state": "panic-selling"},
+    "action": "WAIT",
+    "conviction_range": [50, 70],
+    "guardrails": ["Do not market-sell", "Re-evaluate in 15 minutes", "Use limit orders only"],
+    "cooldown": 15,
+    "priority": 10
+  },
+  {
+    "name": "revenge_no_trade",
+    "conditions": {"emotion": "revenge"},
+    "action": "NO_TRADE",
+    "conviction_range": [80, 90],
+    "guardrails": ["Mandatory 30-minute cooldown", "Write down thesis before any trade", "Max position size = standard or smaller"],
+    "cooldown": 30,
+    "priority": 20
+  },
+  {
+    "name": "revenge_trading_state",
+    "conditions": {"state": "revenge-trading"},
+    "action": "NO_TRADE",
+    "conviction_range": [80, 90],
+    "guardrails": ["Mandatory 30-minute cooldown", "Write down thesis before any trade"],
+    "cooldown": 30,
+    "priority": 20
+  },
+  {
+    "name": "fomo_chasing_wait",
+    "conditions": {"state": "FOMO-chasing"},
+    "action": "WAIT",
+    "conviction_range": [60, 80],
+    "guardrails": ["Wait for a pullback", "Size at 50% or less", "Use limit orders below current price"],
+    "cooldown": 10,
+    "priority": 10
+  },
+  {
+    "name": "greed_top_reduce",
+    "conditions": {"state": "greed-top"},
+    "action": "REDUCE",
+    "conviction_range": [60, 75],
+    "guardrails": ["Take partial profits (25-50%)", "Move stop to break-even"],
+    "cooldown": 0,
+    "priority": 10
+  },
+  {
+    "name": "tilted_no_trade",
+    "conditions": {"state": "tilted"},
+    "action": "NO_TRADE",
+    "conviction_range": [85, 85],
+    "guardrails": ["Close the trading app", "No trades until rested", "Review journal before resuming"],
+    "cooldown": 60,
+    "priority": 15
+  },
+  {
+    "name": "high_intensity_anger",
+    "conditions": {"emotion": "anger", "intensity_min": 70},
+    "action": "NO_TRADE",
+    "conviction_range": [75, 90],
+    "guardrails": ["Step away from the screen", "Mandatory cooldown"],
+    "cooldown": 30,
+    "priority": 15
+  },
+  {
+    "name": "overconfidence_reduce",
+    "conditions": {"emotion": "overconfidence", "intensity_min": 60},
+    "action": "REDUCE",
+    "conviction_range": [55, 70],
+    "guardrails": ["Complete confirmation checklist", "List 3 ways this could fail"],
+    "cooldown": 0,
+    "priority": 10
+  },
+  {
+    "name": "calm_hold",
+    "conditions": {"state": "calm"},
+    "action": "HOLD",
+    "conviction_range": [30, 50],
+    "guardrails": ["Emotional state is neutral -- trust your own analysis"],
+    "cooldown": 0,
+    "priority": 1
+  }
+]
