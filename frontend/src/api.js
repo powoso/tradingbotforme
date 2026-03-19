@@ -83,3 +83,22 @@ export async function updateSettings(settings) {
 export async function healthCheck() {
   return request('/health');
 }
+
+// --- New API methods ---
+
+export async function getPrices(symbols) {
+  const params = symbols ? `?symbols=${symbols.join(',')}` : '';
+  return request(`/prices${params}`);
+}
+
+export async function getTrending() {
+  return request('/prices/trending');
+}
+
+export async function getFearGreed() {
+  return request('/prices/fear-greed');
+}
+
+export async function getStreaks() {
+  return request('/streaks');
+}

@@ -27,6 +27,19 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\bthis is insane\b", 8),
         (r"\bstopped out\b", 8),
         (r"\bagain\b", 5),
+        # Crypto slang
+        (r"\bwtf\b", 11),
+        (r"\bbs\b", 8),
+        (r"\bfk|fck|fuk\b", 12),
+        (r"\bthis is trash\b", 10),
+        (r"\bgarbage\b", 9),
+        (r"\brug(ged)?\b", 14),
+        (r"\binsiders?\b", 12),
+        (r"\bwhale.{0,10}(dump|manipulat|scam)", 14),
+        (r"\brobbed\b", 13),
+        (r"\bfucking?\b", 10),
+        (r"\bshit(coin|show)?\b", 10),
+        (r"\bponzi\b", 14),
     ],
     "despair": [
         (r"\bhopeless\b", 15),
@@ -40,6 +53,19 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\bwiped out\b", 16),
         (r"\bnothing left\b", 15),
         (r"\bwant to quit\b", 13),
+        # Crypto slang
+        (r"\brekt\b", 16),
+        (r"\bgot rekt\b", 18),
+        (r"\bholding bags?\b", 13),
+        (r"\bbag ?hold", 14),
+        (r"\bdown bad\b", 15),
+        (r"\bunder ?water\b", 13),
+        (r"\bliquidat", 17),
+        (r"\bgot liquidated\b", 18),
+        (r"\bmargin call\b", 16),
+        (r"\baccount.{0,10}(zero|gone|empty|blown)", 17),
+        (r"\bwrecked\b", 15),
+        (r"\bdestroyed\b", 14),
     ],
     "capitulation": [
         (r"\bsell(ing)? everything\b", 18),
@@ -55,6 +81,16 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\bget me out\b", 14),
         (r"\bneed to sell\b", 13),
         (r"\bsell.{0,10}now\b", 14),
+        # Crypto slang
+        (r"\bcapitulat", 16),
+        (r"\bpaper hands?\b", 13),
+        (r"\bweak hands?\b", 12),
+        (r"\bsurrender\b", 14),
+        (r"\bthrowing in the towel\b", 15),
+        (r"\bclosing (my )?position", 14),
+        (r"\bexiting (the )?(market|trade|position)", 14),
+        (r"\bi quit\b", 15),
+        (r"\bnever (trad|invest|buy)", 16),
     ],
     "revenge": [
         (r"\bgetting it back\b", 14),
@@ -71,6 +107,18 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\bstopped out.{0,20}(back|again|going)\b", 15),
         (r"\bshake.{0,10}out\b", 12),
         (r"\bwon'?t (let|give|stop)\b", 11),
+        # Crypto slang
+        (r"\bmax leverage\b", 16),
+        (r"\b100x\b", 15),
+        (r"\b50x\b", 14),
+        (r"\b(10|20|25)x\b", 12),
+        (r"\bcross margin\b", 13),
+        (r"\ball in.{0,10}(now|this|on)", 16),
+        (r"\bneed.{0,10}(back|recover|make up)", 13),
+        (r"\btilted.{0,10}(but|going|still)", 14),
+        (r"\bfull send\b", 13),
+        (r"\bape(ing)? (in|into)\b", 14),
+        (r"\bdegen (mode|play|bet)", 14),
     ],
     "fomo": [
         (r"\bmissing out\b", 14),
@@ -84,6 +132,22 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\bstill early\b", 10),
         (r"\beveryone (making|getting) (rich|money)\b", 13),
         (r"\bcan'?t miss this\b", 14),
+        # Crypto slang
+        (r"\bwagmi\b", 13),
+        (r"\bngmi\b", 11),
+        (r"\bape in\b", 14),
+        (r"\bsend(ing)? it\b", 12),
+        (r"\bpump(ing|ed)?\b", 12),
+        (r"\bgreen candle", 11),
+        (r"\bbreaking (out|up|ath|high)", 13),
+        (r"\bnew (ath|all[- ]time[- ]high)\b", 14),
+        (r"\bparabolic\b", 14),
+        (r"\bmooning\b", 14),
+        (r"\brocket\b", 11),
+        (r"\blambo\b", 12),
+        (r"\b(my |)friends? (are |)(all )?(making|buying|in)\b", 13),
+        (r"\btwitter.{0,10}(bullish|buying|pump)", 12),
+        (r"\bct.{0,5}(is |)(bullish|pumping|buying)", 12),
     ],
     "panic": [
         (r"\bcrash(ed|ing|es)?\b", 14),
@@ -102,6 +166,19 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\bgoes? to zero\b", 15),
         (r"\b(sell|get out|exit) (everything|all|now)\b", 14),
         (r"\bbefore it", 8),
+        # Crypto slang
+        (r"\bser\b", 6),
+        (r"\bnuke(d)?\b", 14),
+        (r"\bred candle", 11),
+        (r"\bcascading liquidat", 16),
+        (r"\bdepegg?ed\b", 15),
+        (r"\bbank run\b", 15),
+        (r"\binsolvency?\b", 15),
+        (r"\bwinding down\b", 13),
+        (r"\bexploit(ed)?\b", 14),
+        (r"\bhack(ed)?\b", 14),
+        (r"\bdrain(ed)?\b", 13),
+        (r"\bcontagion\b", 14),
     ],
     "greed": [
         (r"\beasy money\b", 14),
@@ -114,6 +191,19 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\binfinite (money|gains)\b", 15),
         (r"\brisk[- ]free\b", 14),
         (r"\bguaranteed (profit|money|gains)\b", 15),
+        # Crypto slang
+        (r"\b(10|100|1000)x\b", 14),
+        (r"\bgem\b", 10),
+        (r"\balpha\b", 9),
+        (r"\bearly\b", 8),
+        (r"\blife[- ]?changing\b", 14),
+        (r"\bgenerational\b", 13),
+        (r"\bretire (early|young)\b", 14),
+        (r"\bmulti[- ]?bagger\b", 13),
+        (r"\bmoon ?bag\b", 12),
+        (r"\bdiamonds?\b", 10),
+        (r"\brich\b", 10),
+        (r"\bwealth\b", 9),
     ],
     "euphoria": [
         (r"\bgenius\b", 14),
@@ -127,6 +217,18 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\beverything i touch\b", 13),
         (r"\bwinning streak\b", 12),
         (r"\bi'?m (a )?god\b", 14),
+        # Crypto slang
+        (r"\bchad\b", 11),
+        (r"\bbased\b", 9),
+        (r"\bwe'?re (all )?gonna make it\b", 13),
+        (r"\bup only\b", 13),
+        (r"\bsuper ?cycle\b", 14),
+        (r"\bcant stop winning\b", 14),
+        (r"\bevery trade.{0,10}(hits|wins|prints)", 15),
+        (r"\bfeel (like )?(a )?god\b", 14),
+        (r"\bking\b", 9),
+        (r"\blegend\b", 10),
+        (r"\bcrush(ing|ed)? it\b", 12),
     ],
     "exhaustion": [
         (r"\bso tired\b", 12),
@@ -140,6 +242,17 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\boverwhelmed\b", 11),
         (r"\btilt(ed|ing)?\b", 13),
         (r"\bdrained\b", 12),
+        # Crypto slang
+        (r"\bstaring at charts\b", 12),
+        (r"\bcan'?t sleep\b", 13),
+        (r"\b(24|48) hours?\b", 10),
+        (r"\bscreen time\b", 10),
+        (r"\bglued to (the )?screen\b", 13),
+        (r"\bovertrading?\b", 14),
+        (r"\btoo many (tabs|charts|positions)\b", 12),
+        (r"\bburnt?\b", 11),
+        (r"\bmentally\b", 10),
+        (r"\bnothing makes sense\b", 12),
     ],
     "overconfidence": [
         (r"\bguaranteed\b", 14),
@@ -155,6 +268,16 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\bbest trader\b", 14),
         (r"\ball in\b", 11),
         (r"\bleverage\b", 9),
+        # Crypto slang
+        (r"\bmax size\b", 13),
+        (r"\bfull port\b", 14),
+        (r"\bport(folio)? (all|100%|entire)", 14),
+        (r"\bslam(ming)?( it)?\b", 12),
+        (r"\bcan'?t go tits up\b", 16),
+        (r"\bliterally free money\b", 16),
+        (r"\binsider (info|knowledge)\b", 15),
+        (r"\bi know (the|a) guy\b", 12),
+        (r"\btrust me\b", 11),
     ],
     "fear": [
         (r"\bscared\b", 12),
@@ -168,7 +291,32 @@ EMOTION_KEYWORDS: dict[str, list[tuple[str, int]]] = {
         (r"\bdread\b", 12),
         (r"\bterrif", 14),
         (r"\bfrightened\b", 13),
+        # Crypto slang
+        (r"\buncertain\b", 9),
+        (r"\bsidelined\b", 8),
+        (r"\bstay(ing)? out\b", 8),
+        (r"\btoo risky\b", 10),
+        (r"\bdon'?t trust\b", 10),
+        (r"\bcould (crash|dump|tank|drop)", 11),
+        (r"\bbear (market|trap|flag)", 11),
+        (r"\bdeath cross\b", 13),
+        (r"\brecession\b", 12),
+        (r"\bregulat", 10),
     ],
+}
+
+# Emoji patterns for emotion detection
+EMOJI_PATTERNS: dict[str, list[tuple[str, int]]] = {
+    "anger": [("😤", 12), ("🤬", 14), ("😡", 13), ("💢", 11), ("🖕", 13)],
+    "despair": [("😭", 14), ("💀", 12), ("☠️", 12), ("🪦", 13), ("😢", 10)],
+    "panic": [("🚨", 12), ("⚠️", 10), ("📉", 11), ("🔴", 9), ("😱", 14), ("💥", 11)],
+    "fomo": [("🚀", 13), ("🌙", 12), ("🔥", 11), ("💎", 10), ("🤑", 12), ("📈", 11)],
+    "greed": [("🤑", 14), ("💰", 12), ("💵", 11), ("🏦", 10), ("💎🙌", 13)],
+    "euphoria": [("🎉", 11), ("🏆", 12), ("👑", 12), ("🐐", 11), ("🔥", 10), ("💪", 10)],
+    "exhaustion": [("😴", 12), ("😵", 13), ("🥱", 10), ("😫", 12), ("😩", 11)],
+    "fear": [("😰", 12), ("😨", 12), ("🥶", 10), ("😬", 9), ("🫣", 10)],
+    "capitulation": [("🏳️", 14), ("📉", 10), ("💸", 12), ("🗑️", 11)],
+    "overconfidence": [("🧠", 10), ("👆", 9), ("💯", 12), ("🎯", 11)],
 }
 
 # Maps emotions to trading states, considering context
@@ -214,6 +362,17 @@ def _count_emphasis(text: str) -> int:
     return min(score, 30)  # Cap emphasis bonus
 
 
+def _count_emoji_scores(text: str) -> dict[str, int]:
+    """Score emotions from emoji usage in the text."""
+    scores: dict[str, int] = {}
+    for emotion, patterns in EMOJI_PATTERNS.items():
+        for emoji_char, weight in patterns:
+            count = text.count(emoji_char)
+            if count > 0:
+                scores[emotion] = scores.get(emotion, 0) + count * weight
+    return scores
+
+
 def detect_emotion_rule_based(text: str) -> EmotionResult:
     """
     Detect the trader's emotional state using keyword matching.
@@ -229,6 +388,11 @@ def detect_emotion_rule_based(text: str) -> EmotionResult:
             total_score += len(matches) * weight
         if total_score > 0:
             scores[emotion] = total_score
+
+    # Add emoji scores
+    emoji_scores = _count_emoji_scores(text)
+    for emotion, score in emoji_scores.items():
+        scores[emotion] = scores.get(emotion, 0) + score
 
     if not scores:
         return EmotionResult(

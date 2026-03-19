@@ -6,7 +6,8 @@ function actionClass(action) {
   if (!action) return '';
   const a = action.toLowerCase().replace(/[\s_]+/g, '-');
   if (a.includes('buy')) return 'buy';
-  if (a.includes('sell') || a.includes('reduce')) return 'sell';
+  if (a.includes('sell')) return 'sell';
+  if (a.includes('reduce')) return 'reduce';
   if (a.includes('wait') || a.includes('hold')) return 'wait';
   return 'no-trade';
 }
@@ -14,7 +15,7 @@ function actionClass(action) {
 function actionBadgeClass(action) {
   const cls = actionClass(action);
   if (cls === 'buy') return 'badge-green';
-  if (cls === 'sell') return 'badge-red';
+  if (cls === 'sell' || cls === 'reduce') return 'badge-red';
   if (cls === 'wait') return 'badge-yellow';
   return 'badge-muted';
 }
@@ -70,22 +71,32 @@ export default function RecommendationCard({ result, onOverride }) {
   }
 
   return (
-    <div className="card">
+    <div>
       {/* Action header */}
       <div className="rec-section">
         <div className={`rec-action ${actionClass(displayAction)}`}>
           {displayAction ? displayAction.replace(/_/g, ' ') : 'UNKNOWN'}
+          {manual_override && (
+            <span className="badge badge-orange" style={{ marginLeft: '0.5rem', fontSize: '0.65rem', verticalAlign: 'middle' }}>
+              OVERRIDDEN
+            </span>
+          )}
         </div>
-        {manual_override && (
-          <span className="badge badge-orange" style={{ marginLeft: '0.5rem', fontSize: '0.7rem' }}>
-            OVERRIDDEN
+        <div className="rec-emotion-row" style={{ marginTop: '0.25rem' }}>
+          {state_label && (
+            <span className={`badge ${actionBadgeClass(recommended_action)}`}>
+              {state_label}
+            </span>
+          )}
+          <span className="badge badge-purple">
+            {primary_emotion} ({emotion_intensity})
           </span>
-        )}
-        {state_label && (
-          <span className={`badge ${actionBadgeClass(recommended_action)}`} style={{ marginTop: '0.25rem' }}>
-            {state_label}
-          </span>
-        )}
+          {secondary_emotion && (
+            <span className="badge badge-blue">
+              {secondary_emotion}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Conviction */}
@@ -97,39 +108,19 @@ export default function RecommendationCard({ result, onOverride }) {
               className="conviction-bar-fill"
               style={{
                 width: `${Math.max(0, Math.min(100, conviction))}%`,
-                background: convictionColor(conviction),
+                background: `linear-gradient(90deg, ${convictionColor(conviction)}, ${convictionColor(conviction)}88)`,
               }}
             />
           </div>
           <span style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: '0.9rem',
-            fontWeight: 600,
+            fontSize: '0.85rem',
+            fontWeight: 700,
             color: convictionColor(conviction),
             minWidth: '36px',
           }}>
             {conviction}%
           </span>
-        </div>
-      </div>
-
-      {/* Emotion */}
-      <div className="rec-section">
-        <div className="rec-section-label">Detected Emotion</div>
-        <div className="rec-emotion-row">
-          <span className="badge badge-purple">
-            {primary_emotion} ({emotion_intensity})
-          </span>
-          {secondary_emotion && (
-            <span className="badge badge-blue">
-              {secondary_emotion}
-            </span>
-          )}
-          {confidence != null && (
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginLeft: '0.5rem' }}>
-              Confidence: {confidence}%
-            </span>
-          )}
         </div>
       </div>
 
@@ -161,7 +152,7 @@ export default function RecommendationCard({ result, onOverride }) {
       {guardrails && guardrails.length > 0 && (
         <div className="rec-section">
           <div className="rec-section-label">Guardrails</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
             {guardrails.map((g, i) => (
               <span key={i} className="guardrail-badge">
                 &#9888; {typeof g === 'string' ? g : JSON.stringify(g)}
@@ -182,14 +173,14 @@ export default function RecommendationCard({ result, onOverride }) {
 
       {/* Override */}
       <div className="override-area">
-        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Override:</span>
+        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Override:</span>
         <select
           className="form-select"
           value={overrideAction}
           onChange={(e) => setOverrideAction(e.target.value)}
-          style={{ width: 'auto', minWidth: '140px' }}
+          style={{ width: 'auto', minWidth: '120px', fontSize: '0.82rem', padding: '0.3rem 0.5rem' }}
         >
-          <option value="">Choose action...</option>
+          <option value="">Choose...</option>
           {ACTION_OPTIONS.map((a) => (
             <option key={a} value={a}>{a.replace(/_/g, ' ')}</option>
           ))}
@@ -199,7 +190,7 @@ export default function RecommendationCard({ result, onOverride }) {
           onClick={handleOverride}
           disabled={!overrideAction || overriding}
         >
-          {overriding ? 'Saving...' : 'Apply Override'}
+          {overriding ? 'Saving...' : 'Apply'}
         </button>
       </div>
     </div>

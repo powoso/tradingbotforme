@@ -41,7 +41,9 @@ from backend.models import (
     StatsResponse,
 )
 from backend.notify import notify_if_needed
+from backend.prices import get_prices, get_trending, get_fear_greed_index
 from backend.rules import get_rules_raw, save_rules
+from backend.streaks import analyze_streaks
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -331,6 +333,32 @@ async def update_settings(new_settings: dict):
     except Exception as exc:
         logger.error("Failed to save settings: %s", exc)
         raise HTTPException(status_code=500, detail="Failed to save settings.") from exc
+
+
+@app.get("/api/prices")
+async def prices(symbols: Optional[str] = Query(None)):
+    """Get live crypto prices. Comma-separated symbols or defaults."""
+    sym_list = symbols.split(",") if symbols else None
+    return await get_prices(sym_list)
+
+
+@app.get("/api/prices/trending")
+async def trending():
+    """Get trending coins from CoinGecko."""
+    return await get_trending()
+
+
+@app.get("/api/prices/fear-greed")
+async def fear_greed():
+    """Get the Crypto Fear & Greed Index."""
+    return await get_fear_greed_index()
+
+
+@app.get("/api/streaks")
+async def streaks():
+    """Get emotional streak analysis from recent journal entries."""
+    entries = get_entries(limit=50)
+    return analyze_streaks(entries)
 
 
 @app.get("/api/health")

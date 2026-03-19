@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getStats } from '../api';
+import { getStats, getStreaks } from '../api';
+import StreakAlert from './StreakAlert';
 
 function BarChart({ data, color, maxValue }) {
   if (!data || data.length === 0) return <div className="empty-state" style={{ padding: '1rem' }}>No data</div>;
@@ -33,6 +34,15 @@ function StatCard({ title, children }) {
         <span className="card-title">{title}</span>
       </div>
       {children}
+    </div>
+  );
+}
+
+function MiniStat({ value, label, color }) {
+  return (
+    <div className="card" style={{ textAlign: 'center' }}>
+      <div className="stat-number" style={{ color: color || 'var(--blue)' }}>{value}</div>
+      <div className="stat-label">{label}</div>
     </div>
   );
 }
@@ -72,51 +82,55 @@ export default function StatsPage() {
     return <div className="empty-state"><div className="empty-state-icon">&#x1f4ca;</div><div className="empty-state-text">No statistics available yet.</div></div>;
   }
 
-  // Parse stats data (adapt to whatever the API returns)
-  const emotionCounts = mapToBarData(stats.emotion_counts || stats.emotions || {}, 'var(--purple)');
-  const actionCounts = mapToBarData(stats.action_counts || stats.recommendations || {}, 'var(--blue)');
-  const actionsTaken = mapToBarData(stats.actions_taken || {}, 'var(--yellow)');
+  const emotionCounts = mapToBarData(stats.emotion_counts || {}, 'var(--purple)');
+  const stateCounts = mapToBarData(stats.state_counts || {}, 'var(--cyan)');
+  const actionCounts = mapToBarData(stats.action_counts || {}, 'var(--blue)');
   const pnlByEmotion = mapToPnlBarData(stats.pnl_by_emotion || {});
-  const totalEntries = stats.total_entries ?? stats.total ?? 0;
-  const reviewedEntries = stats.reviewed_entries ?? stats.reviewed ?? 0;
-  const followRate = stats.follow_rate ?? null;
-  const pnlFollowing = stats.pnl_following ?? stats.pnl_when_following ?? null;
-  const pnlNotFollowing = stats.pnl_not_following ?? stats.pnl_when_not_following ?? null;
+  const totalEntries = stats.total_entries ?? 0;
+  const reviewedEntries = stats.reviewed_entries ?? 0;
+  const avgIntensity = stats.avg_intensity ?? 0;
+  const avgConviction = stats.avg_conviction ?? 0;
+  const overrideRate = stats.override_rate ?? 0;
+  const totalPnl = stats.total_pnl ?? 0;
+  const pnlFollowed = stats.pnl_by_followed?.followed ?? null;
+  const pnlIgnored = stats.pnl_by_followed?.ignored ?? null;
+  const followedCount = stats.pnl_by_followed?.followed_count ?? 0;
+  const ignoredCount = stats.pnl_by_followed?.ignored_count ?? 0;
 
   return (
     <div>
+      {/* Streaks & Patterns section */}
+      <StatCard title="Emotional Patterns & Streaks">
+        <StreakAlert compact={false} />
+      </StatCard>
+
       {/* Summary row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
-        <div className="card" style={{ textAlign: 'center' }}>
-          <div className="stat-number" style={{ color: 'var(--blue)' }}>{totalEntries}</div>
-          <div className="stat-label">Total Entries</div>
-        </div>
-        <div className="card" style={{ textAlign: 'center' }}>
-          <div className="stat-number" style={{ color: 'var(--green)' }}>{reviewedEntries}</div>
-          <div className="stat-label">Reviewed</div>
-        </div>
-        <div className="card" style={{ textAlign: 'center' }}>
-          <div className="stat-number" style={{ color: 'var(--yellow)' }}>
-            {followRate != null ? `${Math.round(followRate * 100)}%` : '-'}
-          </div>
-          <div className="stat-label">Follow Rate</div>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
+        <MiniStat value={totalEntries} label="Total Entries" color="var(--blue)" />
+        <MiniStat value={avgIntensity} label="Avg Intensity" color={avgIntensity > 60 ? 'var(--red)' : 'var(--yellow)'} />
+        <MiniStat value={avgConviction} label="Avg Conviction" color="var(--green)" />
+        <MiniStat value={`${overrideRate}%`} label="Override Rate" color="var(--orange)" />
+        <MiniStat
+          value={totalPnl >= 0 ? `+${totalPnl.toFixed(0)}` : totalPnl.toFixed(0)}
+          label="Total P/L"
+          color={totalPnl >= 0 ? 'var(--green)' : 'var(--red)'}
+        />
       </div>
 
       <div className="stats-grid">
         {/* Emotion distribution */}
-        <StatCard title="Most Common Emotional States">
+        <StatCard title="Emotion Distribution">
           <BarChart data={emotionCounts} color="var(--purple)" />
+        </StatCard>
+
+        {/* State distribution */}
+        <StatCard title="Trading States">
+          <BarChart data={stateCounts} color="var(--cyan)" />
         </StatCard>
 
         {/* Recommended actions */}
         <StatCard title="Actions Recommended">
           <BarChart data={actionCounts} color="var(--blue)" />
-        </StatCard>
-
-        {/* Actions actually taken */}
-        <StatCard title="Actions Actually Taken">
-          <BarChart data={actionsTaken} color="var(--yellow)" />
         </StatCard>
 
         {/* P/L by emotion */}
@@ -126,26 +140,36 @@ export default function StatsPage() {
       </div>
 
       {/* Following vs Not comparison */}
-      {(pnlFollowing != null || pnlNotFollowing != null) && (
+      {(pnlFollowed != null || pnlIgnored != null) && (
         <div className="card" style={{ marginTop: '1rem' }}>
           <div className="card-header">
             <span className="card-title">P/L: Following Bot vs Not</span>
           </div>
           <div className="comparison-row">
-            <div className="comparison-card" style={{ border: '1px solid var(--green)', borderColor: 'rgba(38,166,65,0.3)' }}>
+            <div className="comparison-card" style={{ border: '1px solid rgba(16,185,129,0.25)' }}>
               <div className="stat-number" style={{ color: 'var(--green)' }}>
-                {pnlFollowing != null ? formatPnlDisplay(pnlFollowing) : '-'}
+                {pnlFollowed != null ? formatPnlDisplay(pnlFollowed) : '-'}
               </div>
-              <div className="stat-label">When Following Bot</div>
+              <div className="stat-label">When Following ({followedCount} trades)</div>
             </div>
-            <div className="comparison-card" style={{ border: '1px solid var(--red)', borderColor: 'rgba(248,81,73,0.3)' }}>
+            <div className="comparison-card" style={{ border: '1px solid rgba(239,68,68,0.25)' }}>
               <div className="stat-number" style={{ color: 'var(--red)' }}>
-                {pnlNotFollowing != null ? formatPnlDisplay(pnlNotFollowing) : '-'}
+                {pnlIgnored != null ? formatPnlDisplay(pnlIgnored) : '-'}
               </div>
-              <div className="stat-label">When Not Following</div>
+              <div className="stat-label">When Ignoring ({ignoredCount} trades)</div>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Outcomes breakdown */}
+      {stats.outcomes && Object.keys(stats.outcomes).length > 0 && (
+        <StatCard title="Outcome Ratings">
+          <BarChart
+            data={mapToBarData(stats.outcomes, 'var(--yellow)')}
+            color="var(--yellow)"
+          />
+        </StatCard>
       )}
     </div>
   );

@@ -1,10 +1,4 @@
-/* Chat layout */
-.chat-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
+/* Chat input */
 .chat-input-area {
   position: sticky;
   bottom: 0;
@@ -12,39 +6,117 @@
   padding-top: 0.5rem;
 }
 
-.chat-result-area {
-  min-height: 200px;
+.chat-input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: 0.5rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.chat-input-row:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-bg);
+}
+
+.chat-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  padding: 0.35rem 0.5rem;
+  max-height: 150px;
+  min-height: 24px;
+}
+
+.chat-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.chat-send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--blue), #2563eb);
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+
+.chat-send-btn:hover:not(:disabled) {
+  box-shadow: 0 0 16px var(--blue-glow);
+  transform: scale(1.05);
+}
+
+.chat-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.chat-input-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  padding: 0.25rem 0.5rem 0;
+}
+
+.chat-input-hint kbd {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: 3px;
+  color: var(--text-secondary);
 }
 
 /* Recommendation sections */
 .rec-action {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 800;
   letter-spacing: 0.02em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
-.rec-action.buy { color: var(--green); }
-.rec-action.sell { color: var(--red); }
+.rec-action.buy { color: var(--green); text-shadow: 0 0 12px var(--green-glow); }
+.rec-action.sell { color: var(--red); text-shadow: 0 0 12px var(--red-glow); }
+.rec-action.reduce { color: var(--red); }
 .rec-action.wait, .rec-action.hold { color: var(--yellow); }
 .rec-action.no-trade { color: var(--text-muted); }
 
 .rec-section {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .rec-section-label {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.3rem;
 }
 
 .rec-reasoning {
-  font-size: 0.92rem;
-  line-height: 1.65;
+  font-size: 0.88rem;
+  line-height: 1.6;
   color: var(--text-secondary);
 }
 
@@ -58,7 +130,7 @@
 .rec-emotion-row {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
@@ -68,14 +140,14 @@
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
   border-top: 1px solid var(--border-secondary);
 }
 
 .override-area .form-select {
   width: auto;
-  min-width: 140px;
+  min-width: 130px;
 }
 
 /* Journal detail row */
@@ -94,7 +166,7 @@
 }
 
 .settings-section-title {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
   padding-bottom: 0.5rem;
@@ -108,6 +180,11 @@
   border-radius: var(--radius-lg);
   padding: 1rem;
   margin-bottom: 0.75rem;
+  transition: border-color var(--transition);
+}
+
+.rule-card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
 .rule-card-header {
@@ -119,13 +196,13 @@
 
 .rule-name {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .rule-detail {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
 }
 
 .rule-detail strong {
@@ -144,7 +221,7 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
   cursor: pointer;
 }

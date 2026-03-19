@@ -10,6 +10,15 @@ export default function ChatInput({ onSend, isLoading }) {
     }
   }, [isLoading]);
 
+  // Auto-resize textarea
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 150) + 'px';
+    }
+  }, [text]);
+
   function handleSubmit(e) {
     e.preventDefault();
     const trimmed = text.trim();
@@ -26,33 +35,35 @@ export default function ChatInput({ onSend, isLoading }) {
 
   return (
     <form onSubmit={handleSubmit} className="chat-input-area">
-      <div className="card" style={{ marginBottom: 0 }}>
+      <div className="chat-input-row">
         <textarea
           ref={textareaRef}
-          className="form-textarea"
-          rows={4}
-          placeholder="Type your trading thought or feeling... e.g. 'I feel like BTC is going to moon, I want to go all in right now'"
+          className="chat-textarea"
+          rows={1}
+          placeholder="What are you feeling about the market right now?"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={isLoading}
-          style={{ marginBottom: '0.75rem', minHeight: '100px' }}
         />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-            Ctrl+Enter to send
-          </span>
-          <button type="submit" className="btn btn-primary btn-lg" disabled={isLoading || !text.trim()}>
-            {isLoading ? (
-              <>
-                <span className="spinner" />
-                Analyzing...
-              </>
-            ) : (
-              'Analyze'
-            )}
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="chat-send-btn"
+          disabled={isLoading || !text.trim()}
+          title="Analyze (Ctrl+Enter)"
+        >
+          {isLoading ? (
+            <span className="spinner" />
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          )}
+        </button>
+      </div>
+      <div className="chat-input-hint">
+        <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to send
       </div>
     </form>
   );
