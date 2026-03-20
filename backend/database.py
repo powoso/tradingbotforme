@@ -167,6 +167,148 @@ def update_entry(entry_id: int, data: dict) -> Optional[JournalEntryDB]:
         session.close()
 
 
+def get_active_cooldown() -> Optional[dict]:
+    """Check if there's an active cooldown from a recent journal entry."""
+    session = get_session()
+    try:
+        # Find the most recent entry with a cooldown
+        entry = (
+            session.query(JournalEntryDB)
+            .filter(JournalEntryDB.cooldown_minutes > 0)
+            .order_by(JournalEntryDB.timestamp.desc())
+            .first()
+        )
+        if not entry:
+            return None
+
+        from datetime import timedelta
+
+        cooldown_end = entry.timestamp + timedelta(minutes=entry.cooldown_minutes)
+        now = datetime.utcnow()
+        if now < cooldown_end:
+            remaining_seconds = int((cooldown_end - now).total_seconds())
+            return {
+                "active": True,
+                "entry_id": entry.id,
+                "started_at": entry.timestamp.isoformat(),
+                "cooldown_minutes": entry.cooldown_minutes,
+                "expires_at": cooldown_end.isoformat(),
+                "remaining_seconds": remaining_seconds,
+                "state_label": entry.state_label,
+                "primary_emotion": entry.primary_emotion,
+            }
+        return None
+    finally:
+        session.close()
+
+
+def get_portfolio_summary() -> list[dict]:
+    """Get a summary of positions by asset from journal entries."""
+    session = get_session()
+    try:
+        entries = (
+            session.query(JournalEntryDB)
+            .filter(JournalEntryDB.asset.isnot(None))
+            .filter(JournalEntryDB.asset != "")
+            .order_by(JournalEntryDB.timestamp.desc())
+            .all()
+        )
+
+        asset_data: dict[str, dict] = {}
+        for e in entries:
+            asset = e.asset.upper()
+            if asset not in asset_data:
+                asset_data[asset] = {
+                    "asset": asset,
+                    "total_entries": 0,
+                    "total_pnl": 0.0,
+                    "last_emotion": e.primary_emotion,
+                    "last_state": e.state_label,
+                    "last_action": e.recommended_action,
+                    "last_timestamp": e.timestamp.isoformat(),
+                    "emotions": {},
+                    "actions": {},
+                }
+            d = asset_data[asset]
+            d["total_entries"] += 1
+            if e.pnl_after_trade is not None:
+                d["total_pnl"] += e.pnl_after_trade
+            d["emotions"][e.primary_emotion] = d["emotions"].get(e.primary_emotion, 0) + 1
+            d["actions"][e.recommended_action] = d["actions"].get(e.recommended_action, 0) + 1
+
+        result = sorted(asset_data.values(), key=lambda x: x["total_entries"], reverse=True)
+        for item in result:
+            item["total_pnl"] = round(item["total_pnl"], 2)
+        return result
+    finally:
+        session.close()
+
+
+def export_entries_csv(
+    emotion: Optional[str] = None,
+    state: Optional[str] = None,
+    action: Optional[str] = None,
+    asset: Optional[str] = None,
+    date_from: Optional[datetime] = None,
+    date_to: Optional[datetime] = None,
+) -> str:
+    """Export journal entries as CSV string."""
+    import csv
+    import io
+
+    entries = get_entries(
+        emotion=emotion,
+        state=state,
+        action=action,
+        asset=asset,
+        date_from=date_from,
+        date_to=date_to,
+        limit=10000,
+        offset=0,
+    )
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "ID", "Timestamp", "Asset", "Raw Text", "Primary Emotion",
+        "Secondary Emotion", "Intensity", "Confidence", "State",
+        "Recommended Action", "Conviction", "Cooldown (min)",
+        "Manual Override", "Override Action", "User Action Taken",
+        "P/L After Trade", "Outcome Rating", "Notes",
+    ])
+
+    for e in entries:
+        guardrails_str = ""
+        if e.guardrails:
+            try:
+                guardrails_str = "; ".join(json.loads(e.guardrails))
+            except (json.JSONDecodeError, TypeError):
+                guardrails_str = str(e.guardrails)
+
+        writer.writerow([
+            e.id,
+            e.timestamp.isoformat() if e.timestamp else "",
+            e.asset or "",
+            e.raw_text or "",
+            e.primary_emotion or "",
+            e.secondary_emotion or "",
+            e.emotion_intensity,
+            e.emotion_confidence,
+            e.state_label or "",
+            e.recommended_action or "",
+            e.conviction,
+            e.cooldown_minutes,
+            "Yes" if e.manual_override else "No",
+            e.override_action or "",
+            e.user_action_taken or "",
+            e.pnl_after_trade if e.pnl_after_trade is not None else "",
+            e.outcome_rating or "",
+            e.notes_after_trade or "",
+        ])
+
+    return output.getvalue()
+
+
 def get_stats() -> dict:
     """Compute aggregate statistics from journal entries."""
     session = get_session()

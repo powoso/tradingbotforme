@@ -9,12 +9,15 @@ import RulesEditor from './components/RulesEditor';
 import SettingsPage from './components/SettingsPage';
 import PriceTicker from './components/PriceTicker';
 import StreakAlert from './components/StreakAlert';
+import CooldownTimer from './components/CooldownTimer';
+import PortfolioSummary from './components/PortfolioSummary';
 import { analyzeMessage, healthCheck, overrideEntry } from './api';
 import './App.css';
 
 const TABS = [
   { id: 'chat', label: 'Chat', icon: '\u{1F4AC}' },
   { id: 'journal', label: 'Journal', icon: '\u{1F4D3}' },
+  { id: 'portfolio', label: 'Portfolio', icon: '\u{1F4BC}' },
   { id: 'stats', label: 'Stats', icon: '\u{1F4CA}' },
   { id: 'rules', label: 'Rules', icon: '\u{2699}' },
   { id: 'settings', label: 'Settings', icon: '\u{1F527}' },
@@ -24,8 +27,17 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('chat');
   const [health, setHealth] = useState('loading');
 
-  // Chat state - keep history of messages
-  const [messages, setMessages] = useState([]);
+  // Chat state - persist history across page reloads
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ct_chat_history');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.map((m) => ({ ...m, timestamp: new Date(m.timestamp) }));
+      }
+    } catch { /* ignore */ }
+    return [];
+  });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState(null);
   const [marketContext, setMarketContext] = useState(() => {
@@ -57,6 +69,19 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('ct_market_context', JSON.stringify(marketContext));
   }, [marketContext]);
+
+  // Persist chat history (keep last 100 messages)
+  useEffect(() => {
+    try {
+      const toSave = messages.slice(-100);
+      localStorage.setItem('ct_chat_history', JSON.stringify(toSave));
+    } catch { /* quota exceeded, ignore */ }
+  }, [messages]);
+
+  const clearChat = useCallback(() => {
+    setMessages([]);
+    localStorage.removeItem('ct_chat_history');
+  }, []);
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -111,6 +136,7 @@ export default function App() {
         return (
           <div className="chat-layout">
             <MarketContext values={marketContext} onChange={setMarketContext} />
+            <CooldownTimer />
             <StreakAlert compact={true} />
 
             {/* Chat messages */}
@@ -204,11 +230,20 @@ export default function App() {
               <div ref={messagesEndRef} />
             </div>
 
-            <ChatInput onSend={handleSend} isLoading={isAnalyzing} />
+            <div className="chat-bottom-bar">
+              <ChatInput onSend={handleSend} isLoading={isAnalyzing} />
+              {messages.length > 0 && (
+                <button className="btn btn-ghost btn-sm clear-chat-btn" onClick={clearChat}>
+                  Clear Chat
+                </button>
+              )}
+            </div>
           </div>
         );
       case 'journal':
         return <JournalList />;
+      case 'portfolio':
+        return <PortfolioSummary />;
       case 'stats':
         return <StatsPage />;
       case 'rules':

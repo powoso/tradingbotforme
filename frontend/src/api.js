@@ -102,3 +102,22 @@ export async function getFearGreed() {
 export async function getStreaks() {
   return request('/streaks');
 }
+
+export async function getCooldown() {
+  return request('/cooldown');
+}
+
+export async function getPortfolio() {
+  return request('/portfolio');
+}
+
+export function getExportUrl(filters = {}) {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      params.append(key, value);
+    }
+  });
+  const query = params.toString();
+  return `/api/journal/export${query ? `?${query}` : ''}`;
+}

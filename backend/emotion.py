@@ -417,7 +417,8 @@ def detect_emotion_rule_based(text: str) -> EmotionResult:
         dominance_ratio = primary[1] / (primary[1] + secondary[1])
         confidence = int(dominance_ratio * 80) + 10
     else:
-        confidence = min(70 + primary[1], 95)
+        # Scale confidence based on score, capping at 95
+        confidence = min(70 + min(primary[1], 25), 95)
 
     return EmotionResult(
         primary_emotion=primary[0],

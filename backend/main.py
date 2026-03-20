@@ -16,8 +16,11 @@ from fastapi.staticfiles import StaticFiles
 
 from backend.database import (
     create_entry,
+    export_entries_csv,
+    get_active_cooldown,
     get_entries,
     get_entry_by_id,
+    get_portfolio_summary,
     get_stats,
     init_db,
     update_entry,
@@ -194,6 +197,18 @@ async def analyze(msg: ChatMessage):
     except Exception as exc:
         logger.warning("Notification dispatch failed: %s", exc)
 
+    # --- Check for active cooldown ---
+    cooldown_warning = None
+    active_cd = get_active_cooldown()
+    if active_cd and active_cd.get("entry_id") != entry_id:
+        mins = active_cd["remaining_seconds"] // 60
+        secs = active_cd["remaining_seconds"] % 60
+        cooldown_warning = (
+            f"You have an active cooldown ({mins}m {secs}s remaining) "
+            f"from a previous {active_cd['state_label']} state. "
+            f"Consider waiting before acting."
+        )
+
     # --- Build response ---
     return AnalysisResponse(
         primary_emotion=result["primary_emotion"],
@@ -209,6 +224,7 @@ async def analyze(msg: ChatMessage):
         guardrails=result.get("guardrails", []),
         cooldown_minutes=result.get("cooldown_minutes", 0),
         entry_id=entry_id,
+        cooldown_warning=cooldown_warning,
     )
 
 
@@ -235,6 +251,33 @@ async def list_journal(
         offset=offset,
     )
     return [JournalEntry.model_validate(e) for e in entries]
+
+
+@app.get("/api/journal/export")
+async def export_journal(
+    emotion: Optional[str] = Query(None),
+    state: Optional[str] = Query(None),
+    action: Optional[str] = Query(None),
+    asset: Optional[str] = Query(None),
+    date_from: Optional[datetime] = Query(None),
+    date_to: Optional[datetime] = Query(None),
+):
+    """Export journal entries as a CSV file."""
+    from fastapi.responses import Response
+
+    csv_data = export_entries_csv(
+        emotion=emotion,
+        state=state,
+        action=action,
+        asset=asset,
+        date_from=date_from,
+        date_to=date_to,
+    )
+    return Response(
+        content=csv_data,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=countertrade_journal.csv"},
+    )
 
 
 @app.get("/api/journal/{entry_id}")
@@ -359,6 +402,21 @@ async def streaks():
     """Get emotional streak analysis from recent journal entries."""
     entries = get_entries(limit=50)
     return analyze_streaks(entries)
+
+
+@app.get("/api/cooldown")
+async def cooldown():
+    """Check if there's an active cooldown from a recent analysis."""
+    result = get_active_cooldown()
+    if result:
+        return result
+    return {"active": False}
+
+
+@app.get("/api/portfolio")
+async def portfolio():
+    """Get portfolio summary grouped by asset."""
+    return get_portfolio_summary()
 
 
 @app.get("/api/health")

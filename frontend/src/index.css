@@ -1245,3 +1245,211 @@ tr.clickable {
     display: none;
   }
 }
+
+/* ============================================
+   COOLDOWN TIMER
+   ============================================ */
+.cooldown-timer-bar {
+  background: rgba(249, 115, 22, 0.08);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 0.5rem;
+  animation: slideIn 300ms ease;
+}
+
+.cooldown-timer-content {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cooldown-timer-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.cooldown-timer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex-shrink: 0;
+}
+
+.cooldown-timer-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--orange);
+}
+
+.cooldown-timer-time {
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.cooldown-timer-progress-bg {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.cooldown-timer-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange), var(--yellow));
+  border-radius: 3px;
+  transition: width 1s linear;
+}
+
+.cooldown-warning-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--red);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+/* ============================================
+   PORTFOLIO
+   ============================================ */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+.portfolio-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  transition: border-color var(--transition);
+}
+
+.portfolio-card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.portfolio-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.portfolio-asset {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.portfolio-pnl {
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.portfolio-stats-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.portfolio-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.portfolio-stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--blue);
+}
+
+.portfolio-stat-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.portfolio-breakdown {
+  margin-bottom: 0.5rem;
+}
+
+.portfolio-breakdown-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.3rem;
+}
+
+.portfolio-breakdown-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  gap: 1px;
+}
+
+.portfolio-breakdown-segment {
+  height: 100%;
+  min-width: 4px;
+  border-radius: 2px;
+  cursor: default;
+  transition: opacity var(--transition);
+}
+
+.portfolio-breakdown-segment:hover {
+  opacity: 0.75;
+}
+
+.portfolio-last-time {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* ============================================
+   CHAT BOTTOM BAR
+   ============================================ */
+.chat-bottom-bar {
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.chat-bottom-bar .chat-input-area {
+  position: static;
+}
+
+.clear-chat-btn {
+  align-self: flex-end;
+  font-size: 0.72rem !important;
+  opacity: 0.6;
+}
+
+.clear-chat-btn:hover {
+  opacity: 1;
+}

@@ -2,10 +2,11 @@
 Pydantic models for the CounterTrade Bot API.
 """
 
+import json
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class MarketContext(BaseModel):
@@ -54,6 +55,7 @@ class AnalysisResponse(BaseModel):
     guardrails: list[str]
     cooldown_minutes: int
     entry_id: int
+    cooldown_warning: Optional[str] = None
 
 
 class JournalEntry(BaseModel):
@@ -63,7 +65,7 @@ class JournalEntry(BaseModel):
     timestamp: datetime
     raw_text: str
     asset: Optional[str] = None
-    market_context_json: Optional[str] = None
+    market_context_json: Optional[dict | str] = None
     primary_emotion: str
     secondary_emotion: Optional[str] = None
     emotion_intensity: int
@@ -72,10 +74,10 @@ class JournalEntry(BaseModel):
     recommended_action: str
     conviction: int
     reasoning: str
-    risk_flags: Optional[str] = None
+    risk_flags: Optional[list[str] | str] = None
     distortion_risk: Optional[str] = None
     disconfirming_evidence: Optional[str] = None
-    guardrails: Optional[str] = None
+    guardrails: Optional[list[str] | str] = None
     cooldown_minutes: int = 0
     user_action_taken: Optional[str] = None
     notes_after_trade: Optional[str] = None
@@ -86,6 +88,36 @@ class JournalEntry(BaseModel):
 
     class Config:
         from_attributes = True
+
+    @field_validator("guardrails", mode="before")
+    @classmethod
+    def parse_guardrails(cls, v):
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except (json.JSONDecodeError, TypeError):
+                return [v]
+        return v
+
+    @field_validator("risk_flags", mode="before")
+    @classmethod
+    def parse_risk_flags(cls, v):
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except (json.JSONDecodeError, TypeError):
+                return [v]
+        return v
+
+    @field_validator("market_context_json", mode="before")
+    @classmethod
+    def parse_market_context(cls, v):
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except (json.JSONDecodeError, TypeError):
+                return v
+        return v
 
 
 class ReviewUpdate(BaseModel):

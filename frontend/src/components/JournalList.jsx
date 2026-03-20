@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getJournal } from '../api';
+import { getJournal, getExportUrl } from '../api';
 import JournalEntry from './JournalEntry';
 import ReviewModal from './ReviewModal';
 
@@ -120,6 +120,20 @@ export default function JournalList() {
           title="To date"
         />
         <button className="btn btn-ghost btn-sm" onClick={fetchEntries}>Refresh</button>
+        <a
+          className="btn btn-ghost btn-sm"
+          href={getExportUrl({
+            emotion: emotionFilter,
+            state: stateFilter,
+            action: actionFilter,
+            date_from: dateFrom,
+            date_to: dateTo,
+          })}
+          download="countertrade_journal.csv"
+          style={{ textDecoration: 'none' }}
+        >
+          Export CSV
+        </a>
       </div>
 
       {error && <div className="error-box">{error}</div>}

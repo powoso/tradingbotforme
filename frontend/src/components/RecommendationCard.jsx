@@ -53,6 +53,7 @@ export default function RecommendationCard({ result, onOverride }) {
     disconfirming_evidence,
     guardrails,
     cooldown_minutes,
+    cooldown_warning,
     manual_override,
     override_action,
   } = result;
@@ -167,6 +168,15 @@ export default function RecommendationCard({ result, onOverride }) {
         <div className="rec-section">
           <div className="cooldown-banner">
             &#9202; Cooldown: wait {formatCooldown(cooldown_minutes)} before acting
+          </div>
+        </div>
+      )}
+
+      {/* Cooldown warning from previous analysis */}
+      {cooldown_warning && (
+        <div className="rec-section">
+          <div className="cooldown-warning-banner">
+            &#9888; {cooldown_warning}
           </div>
         </div>
       )}
